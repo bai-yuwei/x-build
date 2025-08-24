@@ -1,0 +1,2 @@
+docker/mx6ull/tools/fsl-imx-x11-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-toolchain-4.1.15-2.1.0_20241230.sh filter=lfs diff=lfs merge=lfs -text
+*docker/ubuntu/tools/fsl-imx-x11-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-toolchain-4.1.15-2.1.0_20241230.sh filter=lfs diff=lfs merge=lfs -text
