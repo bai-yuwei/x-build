@@ -2,6 +2,8 @@ import yaml
 import sys
 import subprocess
 import os
+import shutil
+from pathlib import Path
 
 def get_immediate_subdirectories_listdir(path):
     """
@@ -33,16 +35,28 @@ if __name__ == "__main__":
     if arguments[0] == "help" or len(arguments) == 0:
         print("Available build targets:")
         print("  clean  - Clean all build directories")
-        print("  dclean - Deep clean all build directories")
+        print("  dclean - Deep clean all build directories and config files")
         print("  all    - Build all projects")
         print("  <name> - Build specific project (e.g., project1, project2)")
     elif arguments[0] == "clean":
-        for arg in arguments:
-            if arg == "clean":
-                continue
-            subprocess.run(f"cmake --build build/{arg} --target clean")
+        if len(arguments) == 1 or arguments[1] == "all":
+            subdirs = [str(p) for p in Path('build').iterdir() if p.is_dir()]
+            print("Cleaning all build directories:", subdirs)
+            for dir in subdirs:
+                subprocess.run(f"cmake --build {dir} --target clean")
+        else:
+            for arg in arguments:
+                if arg == "clean":
+                    continue
+                subprocess.run(f"cmake --build build/{arg} --target clean")
     elif arguments[0] == "dclean":
-        subprocess.run(f"cmake --build build --target clean")
+        if len(arguments) == 1 or arguments[1] == "all":
+            shutil.rmtree("build")
+        else:
+            for arg in arguments:
+                if arg == "dclean":
+                    continue
+                shutil.rmtree(f"build/{arg}")
     elif arguments[0] == "all":
         projectList = get_immediate_subdirectories_listdir("code")
         print("Building all projects:", projectList)
