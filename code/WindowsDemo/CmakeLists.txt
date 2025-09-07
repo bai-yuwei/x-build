@@ -18,7 +18,11 @@ project(
 set(PROJECT_SOURCE "")
 set(PROJECT_INCLUDE_DIRS "")
 
+add_subdirectory(DemoSubFolder)
+
 add_executable(${PROJECT_NAME} test.c)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE DemoSubFolder)
 
 target_include_directories(
     ${PROJECT_NAME}
@@ -32,19 +36,19 @@ target_link_libraries(
 
 target_compile_options(
     ${PROJECT_NAME}
-    PRIVATE
+    PUBLIC
     ${CFLAGS})
 
 target_link_options(
     ${PROJECT_NAME}
-    PRIVATE
+    PUBLIC
     ${LFLAGS})
 
 if(EXISTS "${CONFIG_DIR}/Compilation.txt")
     file(READ "${CONFIG_DIR}/Compilation.txt" USER_CFLAGS)
     target_compile_definitions(
         ${PROJECT_NAME}
-        PRIVATE
+        PUBLIC
         ${USER_CFLAGS})
 endif()
 
@@ -52,7 +56,7 @@ if(EXISTS "${CONFIG_DIR}/Link.txt")
     file(READ "${CONFIG_DIR}/Link.txt" USER_LFLAGS)
     target_link_libraries(
         ${PROJECT_NAME}
-        PRIVATE
+        PUBLIC
         ${USER_LFLAGS})
 endif()
 

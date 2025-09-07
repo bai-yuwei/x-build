@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(DemoSubFolder LANGUAGES C)
+
+set(SUBFOLDER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(SUBFOLDER_HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+file(GLOB_RECURSE SUBFOLDER_SOURCES ${SUBFOLDER_SOURCE_DIR}/*.c)
+file(GLOB_RECURSE SUBFOLDER_HEADERS ${SUBFOLDER_SOURCE_DIR}/*.h)
+
+set(SUBFOLDER_HEADERS_DIRS "")
+
+foreach(header_file ${SUBFOLDER_HEADERS})
+    # 提取当前文件路径的目录部分
+    get_filename_component(dir_path ${header_file} DIRECTORY)
+    # 将目录路径添加到列表中
+    list(APPEND SUBFOLDER_HEADER_DIRS ${dir_path})
+endforeach()
+
+# 去除列表中的重复目录路径
+list(REMOVE_DUPLICATES SUBFOLDER_HEADER_DIRS)
+
+# 编译子cmake为静态库，因为无法独立编译成库（可以独立编译成库可以生成.a），只能作为对象文件库
+add_library(DemoSubFolder OBJECT ${SUBFOLDER_SOURCES})
+
+target_include_directories(
+    DemoSubFolder
+    PRIVATE
+    ${SUBFOLDER_HEADERS_DIRS})
+
+target_compile_options(
+    DemoSubFolder
+    PRIVATE
+    ${CFLAGS})
+
+
+if(EXISTS "${CONFIG_DIR}/Compilation.txt")
+    file(READ "${CONFIG_DIR}/Compilation.txt" USER_CFLAGS)
+    target_compile_definitions(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${USER_CFLAGS})
+endif()
