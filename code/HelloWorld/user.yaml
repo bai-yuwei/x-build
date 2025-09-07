@@ -1,0 +1,3 @@
+cflag1: -DDEBUG
+cflag2: -Wextra
+lflag1: 
