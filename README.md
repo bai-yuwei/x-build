@@ -29,6 +29,6 @@
 5. 重复步骤3、4，配置其他工程
 6. 运行`build.exe <project1> <project2> ...`执行编译或运行`build.exe all`编译所有`code`下的工程
 ## 开发说明
-1. `config/platform`中的cmake文件为平台相关的通用cmake配置，一般包含编译器/通用编译/链接选项等
-2. project中的主CmakeLists.txt文件需要include config中对应的cmake文件
-3. project中的主CmakeLists.txt文件需要读取对应`build/project`目录下基于`code/project/*.yaml`生成的Compilation.txt和Link.txt
+1. `config/platform`中的`cmake`文件为平台相关的通用`cmake`配置，一般包含编译器/通用编译/链接选项等
+2. `code/project`中的主`CmakeLists.txt`文件需要`include` `config`中对应的`cmake`文件
+3. `code/project`中的主`CmakeLists.txt`文件需要读取对应`build/project`目录下基于`code/project/*.yaml`生成的`Compilation.txt`和`Link.txt`
