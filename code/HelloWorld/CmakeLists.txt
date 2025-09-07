@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.10)
+
+set(PROJECT_NAME HelloWorld)
+
+set(CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../build/${PROJECT_NAME})
+
+project(
+    ${PROJECT_NAME}
+    VERSION 1.0
+    DESCRIPTION "A simple Hello World project"
+    LANGUAGES C ASM)
+
+set(PROJECT_SOURCE "")
+
+add_executable(${PROJECT_NAME} test.c)
+
+if(EXISTS "${CONFIG_DIR}/Compilation.txt")
+    file(READ "${CONFIG_DIR}/Compilation.txt" CFLAGS)
+    target_compile_definitions(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${CFLAGS})
+endif()
+
+if(EXISTS "${CONFIG_DIR}/Link.txt")
+    file(READ "${CONFIG_DIR}/Link.txt" LFLAGS)
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${LFLAGS})
+endif()
+
+

@@ -18,7 +18,6 @@ def get_immediate_subdirectories_listdir(path):
             subdirs.append(entry) # 或者使用 full_path 获取完整路径
     return subdirs
 
-
 if __name__ == "__main__":
     arguments = sys.argv[1:]
     print(f"Project awaiting build: {arguments}")
@@ -48,10 +47,10 @@ if __name__ == "__main__":
         projectList = get_immediate_subdirectories_listdir("code")
         print("Building all projects:", projectList)
         for project in projectList:
-            subprocess.run(f"cmake -S ./code/{project} -B build/{project} -G Ninja && cmake --build build/{project}")
+            subprocess.run(f"cmake -S ./code/{project} -B build/{project} -G Ninja && cmake --build build/{project}", shell=True)
     else:
         for arg in arguments:
-            subprocess.run(f"cmake -S ./code/{arg} -B build/{arg} -G Ninja && cmake --build build/{arg}")
+            subprocess.run(f"cmake -S ./code/{arg} -B build/{arg} -G Ninja && cmake --build build/{arg}", shell=True)
 
 
 

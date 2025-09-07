@@ -15,8 +15,8 @@ if __name__ == "__main__":
         with open(f'./build/{arguments[0]}/Compilation.txt', 'w') as file:
             for key, value in config.items():
                 if ("cflag" in key) :
-                    file.write(f"{value}\n")
+                    file.write(f"{value} ")
         with open(f'./build/{arguments[0]}/Link.txt', 'w') as file:
             for key, value in config.items():
                 if ("lflag" in key) :
-                    file.write(f"{value}\n")
+                    file.write(f"{value} ")
