@@ -1,70 +1,145 @@
-import yaml
+'''
+Author       : Bai_Yuwei(yw_bai@outlook.com)
+Version      : V1.0
+Date         : 2025-09-16 21:26:32
+Description  : 
+Modify       : 
+'''
+
+import json
+import os
 import sys
 import subprocess
-import os
-import shutil
+from typing import List, Dict, Optional
 from pathlib import Path
 
-def get_immediate_subdirectories_listdir(path):
-    """
-    使用 os.listdir 和 os.path.isdir 获取一级子目录名称列表
-    """
-    if not os.path.isdir(path): # 检查路径是否为有效目录[2,6](@ref)
-        print(f"错误：路径 {path} 不存在或不是一个目录。")
+class ConfigManager:
+    def __init__(self):
+        self.data = None
+        self.file = "buildConfig.json"
+        self.load()
+    
+    def load(self):
+        try:
+            with open(self.file, "r") as f:
+                self.data = json.load(f)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"配置文件未找到: {self.file_path}")
+        except json.JSONDecodeError as e:
+            raise ValueError(f"JSON 解析错误: {e}")
+        
+    @property
+    def get_version(self) -> int:
+        return self.data.get("version", 0)
+    
+    def get_all_configs(self) -> List[Dict]:
+        """获取所有配置项"""
+        return self.data.get('config', [])
+    
+    def get_all_config_names(self) -> List[str]:
+        if not isinstance(self.data, dict):
+            return []
+        configs = self.data.get('config')
+        if not isinstance(configs, list):
+            return []
+        names = []
+        for config in configs:
+            if not isinstance(config, dict):
+                continue
+            name = config.get('name')
+            if isinstance(name, str) and name.strip():
+                names.append(name)
+        return names
+
+    def get_config(self, name: str) -> Optional[Dict]:
+        """根据名称获取特定配置项"""
+        for config in self.data.get('config', []):
+            if config.get('name') == name:
+                return config
+        return None
+
+    def get_cflags(self, name: str) -> List[str]:
+        config = self.get_config(name)
+        if config:
+            return config.get('cflags', [])
         return []
-    all_entries = os.listdir(path)
-    subdirs = []
-    for entry in all_entries:
-        full_path = os.path.join(path, entry) # 组合完整路径[1,2](@ref)
-        if os.path.isdir(full_path):
-            subdirs.append(entry) # 或者使用 full_path 获取完整路径
-    return subdirs
+    
+    def get_lflags(self, name: str) -> List[str]:
+        config = self.get_config(name)
+        if config:
+            return config.get('lflags', [])
+        return []
+    
+    def get_platform(self, name: str) -> str:
+        config = self.get_config(name)
+        if config:
+            return config.get('platform', "winArm")
+        return "winArm"
+    
+    def get_compiler(self, name: str) -> str:
+        config = self.get_config(name)
+        if config:
+            return config.get('compiler', "gcc")
+        return "gcc"
+    def get_type(self, name: str) -> str:
+        config = self.get_config(name)
+        if config:
+            return config.get('type', "debug")
+        return "debug"
+    
+
+
+def build_project_modern(project, platform, compiler, buildType):
+    """使用新式 CMake 命令构建项目"""
+    
+    # 确保构建目录存在
+    build_dir = f"build/{project}"
+    script_dir = Path(__file__).parent.absolute()
+    os.makedirs(build_dir, exist_ok=True)
+    
+    try:
+        # 配置项目（使用 -S 和 -B 参数）
+        print("配置 CMake 项目...")
+        subprocess.run([
+            "cmake", 
+            "-S", f"{script_dir}/code/{project}",
+            "-B", build_dir,
+            "-G", "Ninja",
+            f"-DCMAKE_TOOLCHAIN_FILE={script_dir}/config/{platform}/{platform}-{compiler}.cmake",
+            f"-DCMAKE_BUILD_TYPE={buildType}"
+        ], check=True)
+        
+        # 构建项目
+        print("构建项目...")
+        subprocess.run([
+            "cmake",
+            "--build", build_dir
+        ], check=True)
+        
+        print("构建成功!")
+        return True
+        
+    except subprocess.CalledProcessError as e:
+        print(f"构建失败: {e}")
+        return False
+
 
 if __name__ == "__main__":
-    arguments = sys.argv[1:]
-    print(f"Project awaiting build: {arguments}")
-    with open('./config/config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
-    sys.path.insert(0, config['c_compiler_path'])
-    sys.path.insert(1, config['cxx_compiler_path'])
-    sys.path.insert(2, config['asm_compiler_path'])
-    print("c_compiler_path:", config['c_compiler_path'])
-    print("cxx_compiler_path:", config['cxx_compiler_path'])
-    print("asm_compiler_path:", config['asm_compiler_path'])
-    # print(sys.path)
-    if arguments[0] == "help" or len(arguments) == 0:
-        print("Available build targets:")
-        print("  clean  - Clean all build directories")
-        print("  dclean - Deep clean all build directories and config files")
-        print("  all    - Build all projects")
-        print("  <name> - Build specific project (e.g., project1, project2)")
-    elif arguments[0] == "clean":
-        if len(arguments) == 1 or arguments[1] == "all":
-            subdirs = [str(p) for p in Path('build').iterdir() if p.is_dir()]
-            print("Cleaning all build directories:", subdirs)
-            for dir in subdirs:
-                subprocess.run(f"cmake --build {dir} --target clean")
-        else:
-            for arg in arguments:
-                if arg == "clean":
-                    continue
-                subprocess.run(f"cmake --build build/{arg} --target clean")
-    elif arguments[0] == "dclean":
-        if len(arguments) == 1 or arguments[1] == "all":
-            shutil.rmtree("build")
-        else:
-            for arg in arguments:
-                if arg == "dclean":
-                    continue
-                shutil.rmtree(f"build/{arg}")
-    elif arguments[0] == "all":
-        projectList = get_immediate_subdirectories_listdir("code")
-        print("Building all projects:", projectList)
-        for project in projectList:
-            subprocess.run(f"cmake -S ./code/{project} -B build/{project} -G Ninja && cmake --build build/{project}", shell=True)
-    else:
-        for arg in arguments:
-            subprocess.run(f"cmake -S ./code/{arg} -B build/{arg} -G Ninja && cmake --build build/{arg}", shell=True)
-
-
-
+    print("Build Script Start...")
+    config_manager = ConfigManager()
+    projects = config_manager.get_all_config_names()
+    for project in projects:
+        print(f"Building project: {project}...")
+        cflags = config_manager.get_cflags(project)
+        lflags = config_manager.get_lflags(project)
+        platform = config_manager.get_platform(project)
+        compiler = config_manager.get_compiler(project)
+        buildType = config_manager.get_type(project)
+        
+        print(f"Platform: {platform}")
+        print(f"Compiler: {compiler}")
+        print(f"Type: {buildType}")
+        print(f"CFLAGS: {' '.join(cflags)}")
+        print(f"LFLAGS: {' '.join(lflags)}")
+        
+        build_project_modern(project, platform, compiler, buildType)
