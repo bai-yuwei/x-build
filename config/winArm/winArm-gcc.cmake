@@ -25,15 +25,11 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(
     CFLAGS
     -nostdlib
-    -nostdinc
-    -fno-builtin
-    -fno-stack-protector
-    -no-pie
-    -fno-pic
 )
 
 set(
     LFLAGS
+    -nostdlib
 )
 
 set(
