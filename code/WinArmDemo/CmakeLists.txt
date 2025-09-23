@@ -32,17 +32,18 @@ target_link_libraries(
     PRIVATE
     )
 
+message("!!!!!!!!!!!!!!!!!!!!!!CFLAGS: ${CFLAGS}")
+
 target_compile_options(
     ${PROJECT_NAME}
     PUBLIC
-    -nostdlib
+    ${CFLAGS}
     )
 
 target_link_options(
     ${PROJECT_NAME}
     PUBLIC
-    -nostdlib
-    -nostartfiles)
+    ${LFLAGS})
 
 if(EXISTS "${CONFIG_DIR}/Compilation.txt")
     file(READ "${CONFIG_DIR}/Compilation.txt" USER_CFLAGS)
