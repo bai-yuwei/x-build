@@ -1,0 +1,13 @@
+{
+    "version": 1,
+    "config": [
+        {
+            "name": "WinArmDemo",
+            "platform": "winArm",
+            "compiler": "gcc",
+            "type": "Debug",
+            "cflags": ["-Wextra", "-Wextra"],
+            "lflags": []
+        }
+    ]
+}
