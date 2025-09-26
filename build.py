@@ -116,6 +116,12 @@ def build_project(project, platform, compiler, buildType):
             "cmake",
             "--build", build_dir
         ], check=True)
+
+        print("install项目...")
+        subprocess.run([
+            "cmake",
+            "--install", build_dir
+        ], check=True)
         
         print("构建成功!")
         return True
