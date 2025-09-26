@@ -175,12 +175,15 @@ if __name__ == "__main__":
         print(f"CFLAGS: {' '.join(cflags)}")
         print(f"LFLAGS: {' '.join(lflags)}")
         
-        if len(sys.argv) > 1 and sys.argv[1] == "clean":
-            build_dir = f"build/{project}"
-            if os.path.exists(build_dir):
-                print(f"Cleaning build directory: {build_dir}")
-                clean_build_directory(project)
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "clean" and len(sys.argv) == 2:
+                build_dir = f"build/{project}"
+                if os.path.exists(build_dir):
+                    print(f"Cleaning build directory: {build_dir}")
+                    clean_build_directory(project)
+                else:
+                    print(f"No build directory to clean for project: {project}")
             else:
-                print(f"No build directory to clean for project: {project}")
+                print("Unknown command. Use 'clean' to clean the build directory.")
         else:
             build_project(project, platform, compiler, buildType)
