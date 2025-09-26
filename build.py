@@ -8,6 +8,7 @@ Modify       :
 
 import json
 import os
+import shutil
 import sys
 import subprocess
 from typing import List, Dict, Optional
@@ -89,7 +90,7 @@ class ConfigManager:
     
 
 
-def build_project_modern(project, platform, compiler, buildType):
+def build_project(project, platform, compiler, buildType):
     """使用新式 CMake 命令构建项目"""
     
     # 确保构建目录存在
@@ -123,9 +124,35 @@ def build_project_modern(project, platform, compiler, buildType):
         print(f"构建失败: {e}")
         return False
 
+def clean_build_directory(project):
+    """使用纯 Python 清理构建目录（完全跨平台）"""
+    build_dir = Path("build") / project
+    
+    if not build_dir.exists():
+        print(f"No build directory to clean for project: {project}")
+        return True
+    
+    print(f"Cleaning build directory: {build_dir}")
+    
+    # 递归删除目录及其内容
+    try:
+        for item in build_dir.iterdir():
+            if item.is_file():
+                item.unlink()  # 删除文件
+            elif item.is_dir():
+                shutil.rmtree(item)  # 删除子目录
+        
+        # 如果目录为空，尝试删除它
+        if not any(build_dir.iterdir()):
+            build_dir.rmdir()
+            
+        print(f"Successfully cleaned build directory: {build_dir}")
+        return True
+    except Exception as e:
+        print(f"Error cleaning build directory: {e}")
+        return False
 
 if __name__ == "__main__":
-    print("Build Script Start...")
     config_manager = ConfigManager()
     projects = config_manager.get_all_config_names()
     for project in projects:
@@ -142,4 +169,12 @@ if __name__ == "__main__":
         print(f"CFLAGS: {' '.join(cflags)}")
         print(f"LFLAGS: {' '.join(lflags)}")
         
-        build_project_modern(project, platform, compiler, buildType)
+        if len(sys.argv) > 1 and sys.argv[1] == "clean":
+            build_dir = f"build/{project}"
+            if os.path.exists(build_dir):
+                print(f"Cleaning build directory: {build_dir}")
+                clean_build_directory(project)
+            else:
+                print(f"No build directory to clean for project: {project}")
+        else:
+            build_project(project, platform, compiler, buildType)
