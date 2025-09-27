@@ -101,6 +101,10 @@ def build_project(project, platform, compiler, buildType):
     try:
         # 配置项目（使用 -S 和 -B 参数）
         print("配置 CMake 项目...")
+        toolchain_file = Path(f"{script_dir}/config/{platform}/{platform}-{compiler}.cmake")
+        if not toolchain_file.exists():
+            print(f"错误: 找不到工具链文件: {toolchain_file}")
+            return False
         subprocess.run([
             "cmake", 
             "-S", f"{script_dir}/code/{project}",
@@ -114,7 +118,8 @@ def build_project(project, platform, compiler, buildType):
         print("构建项目...")
         subprocess.run([
             "cmake",
-            "--build", build_dir
+            "--build", build_dir,
+            "--parallel", str(os.cpu_count())
         ], check=True)
 
         print("install项目...")
