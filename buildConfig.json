@@ -2,6 +2,14 @@
     "version": 1,
     "config": [
         {
+            "name": "WindowsDemo",
+            "platform": "windows",
+            "compiler": "gcc",
+            "type": "Release",
+            "cflags": ["-m32"],
+            "lflags": []
+        },
+        {
             "name": "WinArmDemo",
             "platform": "winArm",
             "compiler": "gcc",
