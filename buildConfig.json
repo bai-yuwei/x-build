@@ -5,17 +5,13 @@
             "name": "WindowsDemo",
             "platform": "windows",
             "compiler": "gcc",
-            "type": "Release",
-            "cflags": ["-m32"],
-            "lflags": []
+            "type": "Release"
         },
         {
             "name": "WinArmDemo",
             "platform": "winArm",
             "compiler": "gcc",
-            "type": "Debug",
-            "cflags": ["-Wextra", "-Wextra"],
-            "lflags": []
+            "type": "Debug"
         }
     ]
 }
