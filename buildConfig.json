@@ -16,6 +16,10 @@
             "type": "Debug",
             "cflags": ["-nostdlib"],
             "lflags": ["-nostdlib"]
+        },
+        {
+            "name": "userDefineDemo",
+            "userBuildCmd": ["make"]
         }
     ]
 }
