@@ -5,13 +5,17 @@
             "name": "WindowsDemo",
             "platform": "windows",
             "compiler": "gcc",
-            "type": "Release"
+            "type": "Release",
+            "cflags": ["-m64"],
+            "lflags": []
         },
         {
             "name": "WinArmDemo",
             "platform": "winArm",
             "compiler": "gcc",
-            "type": "Debug"
+            "type": "Debug",
+            "cflags": ["-nostdlib"],
+            "lflags": ["-nostdlib"]
         }
     ]
 }
