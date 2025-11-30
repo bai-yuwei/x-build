@@ -21,15 +21,15 @@
 ### 单平台编译
 1. 编辑`buildConfig,json`，配置要编译的工程
 2. 编辑`config`下的`cmake`文件，配置编译器本地路径
-3. 运行`build,py`，执行编译
+3. 运行`build.exe`，执行编译
 4. 查看`build`目录，查看编译成果
-5. 运行`build.py clean`，清理编译成果
-6. 运行`build.py dclean`，清理全部编译环境
+5. 运行`build.exe clean`，清理编译成果
+6. 运行`build.exe dclean`，清理全部编译环境
 ### 跨平台编译
 1. 编辑`buildConfig,json`，配置要编译的工程
 2. 启动docker容器
 3. 配置Docker目录下的Dockerfile
-4. 运行`build,py`，执行编译
+4. 运行`build.exe`，执行编译
 5. 查看`build`目录，查看编译成果
-6. 运行`build.py clean`，清理编译成果
-7. 运行`build.py dclean`，清理全部编译环境
+6. 运行`build.exe clean`，清理编译成果
+7. 运行`build.exe dclean`，清理全部编译环境
