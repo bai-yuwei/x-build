@@ -20,6 +20,14 @@
         {
             "name": "userDefineDemo",
             "userBuildCmd": ["make"]
+        },
+        {
+            "name": "ubootDemo",
+            "dockerfile": "ubuntu",
+            "dockerImage": "ubuntu:latest",
+            "context": "./code/ubootDemo",
+            "resultDir": "./tmp",
+            "dockerBuildCmd": "exec ./build.sh"
         }
     ]
 }
