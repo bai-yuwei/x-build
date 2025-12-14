@@ -33,3 +33,5 @@
 5. 查看`build`目录，查看编译成果
 6. 运行`build.exe clean`，清理编译成果
 7. 运行`build.exe dclean`，清理全部编译环境
+## 注意
+存在大文件使用Git LFS管理，拉取时需要安装Git LFS插件
